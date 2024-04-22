@@ -1,0 +1,17 @@
+jupyter
+coverage
+pytest
+pylint
+black
+isort
+ruff
+mypy
+bump2version
+sphinx
+sphinx-rtd-theme
+numpydoc
+sphinx_automodapi
+sphinx_astropy
+sphinx_click
+sphinx_copybutton
+sphinxemoji

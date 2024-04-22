@@ -1,0 +1,210 @@
+[build-system]
+  requires = ["setuptools"]
+  build-backend = "setuptools.build_meta"
+
+[project]
+name = 'celexta'
+description = ''
+dynamic = ["version"]
+authors = [
+  { name = 'Jesse Palmerio', email='jesse.palmerio@obspm.fr' },
+]
+requires-python = '>=3.10'
+dependencies = [
+    "setuptools>=67.7.0",
+    "numpy",
+    "astropy",
+    "astroquery",
+    "scipy",
+    "pandas",
+    "requests",
+    "pyyaml",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Intended Audience :: Science/Research",
+    "License :: GPLv3",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.10"
+]
+license = {text = "GNU GENERAL PUBLIC LICENSE Version 3"}
+
+[project.urls]
+homepage = 'https://github.com/JPalmerio/Celexta'
+# documentation = ''
+repository = 'https://github.com/JPalmerio/Celexta'
+
+[project.scripts]
+celexta = "celexta.bin.celexta_cl:main"
+
+[project.optional-dependencies]
+test = ["pytest", "pylint", "coverage", "bump2version"]
+
+# TODO: Remove after setuptools support is dropped.
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "celexta.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["celexta", "celexta.*"]
+namespaces = false
+
+
+[tool.black]
+  target-version = ['py38', 'py39', 'py310']
+  line-length = 120
+
+
+[tool.ruff]
+  target-version = "py310"
+  line-length = 120
+
+[tool.ruff.lint]
+  select = ["ALL"]
+  extend-ignore = [
+    # flake8-annotations (ANN) : static typing
+    # TODO: revisit this when this package implements typing.
+    "ANN",
+
+    # flake8-bugbear (B)
+    "B008",  # FunctionCallArgumentDefault
+
+    # flake8-commas (COM)
+    "COM812",  # TrailingCommaMissing
+    "COM818",  # TrailingCommaOnBareTupleProhibited
+    "COM819",  # TrailingCommaProhibited
+
+    # pydocstyle (D)
+    # Missing Docstrings
+    #"D105",  # Missing docstring in magic method. Don't check b/c class docstring.
+    #"D107",  # Missing docstring in __init__. Don't check b/c class docstring.
+    # Docstring Content Issues
+    "D410",  # BlankLineAfterSection. Using D412 instead.
+    "D400",  # EndsInPeriod. Using D415 instead.
+    #"D401",  # non-imperative-mood.
+    "D413",  # BlankLineAfterLastSection. Don't check.
+    "D416",  # SectionNameEndsInColon. Don't check.
+
+    # pycodestyle (E, W)
+    #"E711",  # NoneComparison  (see unfixable)
+    #"E741",  # AmbiguousVariableName
+
+    # eradicate (ERA)
+    # NOTE: autofix, but be careful that some developer notes are kept.
+    #"ERA001",  # CommentedOutCode
+
+    # flake8-executable (EXE)
+    #"EXE002",  # shebang-missing-executable-file
+
+    # Pyflakes (F)
+    "F403",  # ImportStarUsed
+
+    # flake8-boolean-trap (FBT)  : boolean flags should be kwargs, not args
+    # NOTE: a good thing to fix, but changes API.
+    "FBT001", "FBT002", "FBT003",
+
+    # flake8-logging-format (G)
+    #"G003",  # logging-string-concat                   # TODO: fix
+    "G004",  # logging-f-string
+
+    # flake8-implicit-str-concat (ISC)
+    #"ISC001", "ISC003",
+
+    # pandas-vet (PD)
+    #"PD",
+
+    # Pylint (PLC, PLE, PLR, PLW)
+    #"PLR0911",  # too-many-return-statements
+    #"PLR0912",  # too-many-branches
+    #"PLR0913",  # too-many-args
+    "PLR0915",  # too-many-statements. No CNES rule
+
+    # flake8-use-pathlib (PTH)
+    # TODO: fix many / all of these. ``pathlib`` is often preferred.
+    "PTH",
+
+    # flake8-return (RET)
+    "RET504", # Unnecessary variable assignment before return statement
+
+    # Ruff-specific rules (RUF)
+    #"RUF001", "RUF002", "RUF003",  # AmbiguousUnicode, maybe fix?
+    "RUF005",  # unpack-instead-of-concatenating-to-collection-literal -- it's not clearly faster.
+
+    # flake8-bandit (S)
+    #"S324",  # hashlib-insecure-hash-function
+
+    # flake8-simplify (SIM)
+    #"SIM102",  # NestedIfStatements                  # TODO: fixable with `pass`.
+    "SIM105",  # UseContextlibSuppress
+    "SIM108",  # UseTernaryOperator                  # TODO? autofix. Impact on readability?
+
+    # flake8-self
+    "SLF001", # private member access
+
+    # flake8-print (T20)
+    #"T201",  # PrintUsed                             # TODO: change to logging
+
+    # tryceratops (TRY)
+    "TRY003",  # raise-vanilla-args
+
+  ]
+
+  # A list of rule codes or prefixes to consider non-autofix-able.
+  unfixable = [
+    "E711"  # NoneComparison. Hard to fix b/c numpy has it's own None.
+  ]
+
+[tool.ruff.lint.per-file-ignores]
+  "setup.py" = ["INP001"]  # Part of configuration, not a package.
+  "__init__.py" = ["E402", "F401", "F403"]
+  "test_*.py" = ["INP001", "B011", "D", "E402", "PGH001", "S101"]
+  "conftest.py" = ["INP001"]  # Part of configuration, not a package.
+  "tests/**/config*.py" = ["INP001"]  # Part of configuration, not a package.
+  "docs/*.py" = [
+      "INP001",  # implicit-namespace-package. The examples are not a package.
+  ]
+
+[tool.ruff.lint.pydocstyle]
+  convention = "numpy"
+
+[tool.ruff.lint.pycodestyle]
+  max-doc-length = 100
+
+[tool.ruff.lint.pylint]
+  # Use CNES python code quality values
+  max-args = 13  # Maximum number of arguments allowed for a function or method definition
+  max-branches = 12  # Maximum number of branches allowed for a function or method body
+  max-returns = 3  # Maximum number of return statements allowed for a function or method body
+  max-statements = 50  # Maximum number of statements allowed for a function or method body
+
+[tool.ruff.lint.mccabe]
+  # Flag errors (`C901`) whenever the complexity level exceeds 15.
+  max-complexity = 15
+
+
+# To be kept consistent with "Import Formatting" section in contributing.rst
+[tool.isort]
+  profile = "black"
+  known_third_party = [
+    "numpy",
+    "astropy",
+    "astroquery",
+    "scipy",
+    "pandas",
+    "requests",
+    "pyyaml",
+    "pytest"
+  ]
+  known_first_party = ["celexta"]
+  group_by_package = true
+  combine_as_imports = true
+  force_grid_wrap = 2
+  force_sort_within_sections = true
+
+[tool.codespell]
+  skip = "*.dat,*.fits,*.hdr,*.xml,*egg*,.git,.tox,_build,venv,_*.c,cython*"
+  ignore-words-list = "blocs, coo, hist, nd, sav, ser, recuse"
+  ignore-regex = 'https://([\w/\.])+'
