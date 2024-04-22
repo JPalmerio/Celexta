@@ -1,0 +1,5 @@
+# User configuration file which will override 'default_config.yaml'
+# This file is used to save the state of certain variables used by Celexta
+
+filenames:
+  last_opened: '~'
