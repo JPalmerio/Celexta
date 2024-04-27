@@ -3,7 +3,7 @@ Celexta
 =======
 
 Welcome to Celexta!
-The CELestial EXploration Toolkit for the transient Astronomer (Celexta) is a Graphical User Interface meant to provide tools to help with common tasks of the transient astronomer[*]_.
+The **CEL**estial **EX**ploration **T**oolkit for the transient **A**stronomer (Celexta) is a Graphical User Interface meant to provide tools to help with common tasks of the transient astronomer[*]_.
 
 Online documentation
 --------------------
