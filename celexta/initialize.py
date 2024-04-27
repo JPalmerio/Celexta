@@ -1,4 +1,4 @@
-"""Module holding all the initialization code"""
+"""Contains all the initialization code"""
 
 import logging
 import logging.config
@@ -8,15 +8,20 @@ from pprint import pformat
 
 import yaml
 
-from celexta import __CELEXTA_DIR__ as ROOT_DIR
+from celexta import __CELEXTA_SRC_DIR__ as SRC_DIR
+from celexta import __CELEXTA_DIR__ as CELEXTA_DIR
 
 log = logging.getLogger(__name__)
-
-DIRS = {
-    "ROOT": ROOT_DIR,
-    "UI": ROOT_DIR / "ui",
-    "DATA": ROOT_DIR / "data",
-    "CONFIG": ROOT_DIR / "config",
+SRC_DIRS = {
+    "ROOT": SRC_DIR,
+    "UI": SRC_DIR / "ui",
+    "DATA": SRC_DIR / "data",
+    "CONFIG": SRC_DIR / "config",
+}
+USR_DIRS = {
+    "ROOT": CELEXTA_DIR,
+    "GCN_MAKER": CELEXTA_DIR / "gcn_maker",
+    "CONFIG": CELEXTA_DIR / "config",
 }
 
 DEFAULT_CONFIG_FNAME = Path("~/.celexta/config/default_config.yaml").expanduser().resolve()
@@ -70,36 +75,42 @@ def load_config() -> dict:
     Returns
     -------
     dict
-        Dictionay containing the configuration.
+        Dictionary containing the configuration.
 
     """
     log.debug("Looking for config file")
+    if not USR_DIRS["ROOT"].exists():
+        log.info(f"Celexta directory not found, creating one under '{USR_DIRS['ROOT']}'")
+        USR_DIRS["ROOT"].mkdir(exist_ok=False, parents=True)
+
     # if the default config file doesn't exist, it generally means it is the first
     # time celexta is installed on the computer, so copy the file
-    if not DEFAULT_CONFIG_FNAME.exists():
-        log.debug(f"No default configuration under '{DEFAULT_CONFIG_FNAME!s}', creating one")
-        DEFAULT_CONFIG_FNAME.parent.mkdir(parents=True, exist_ok=True)
+    default_config_fname = USR_DIRS["CONFIG"] / "default_config.yaml"
+    if not default_config_fname.exists():
+        log.debug(f"No default configuration under '{default_config_fname!s}', creating one")
+        default_config_fname.parent.mkdir(parents=True, exist_ok=True)
         # Copy the default config from celexta source code
-        shutil.copyfile(DIRS["CONFIG"] / "default_config.yaml", DEFAULT_CONFIG_FNAME)
+        shutil.copyfile(SRC_DIRS["CONFIG"] / "default_config.yaml", default_config_fname)
 
     # Load default config
-    with open(DEFAULT_CONFIG_FNAME, encoding="utf-8") as f:
+    with open(default_config_fname, encoding="utf-8") as f:
         config = yaml.safe_load(f)
-        log.debug(f"Loaded default configuration from:\n{DEFAULT_CONFIG_FNAME}")
+        log.debug(f"Loaded default configuration from:\n{default_config_fname}")
 
     # also check if the user_config exists otherwise copy the source user config
-    if not USER_CONFIG_FNAME.exists():
-        shutil.copyfile(DIRS["CONFIG"] / "user_config.yaml", USER_CONFIG_FNAME)
+    user_config_fname = USR_DIRS["CONFIG"] / "user_config.yaml"
+    if not user_config_fname.exists():
+        shutil.copyfile(SRC_DIRS["CONFIG"] / "user_config.yaml", user_config_fname)
     # Load user config
-    with open(USER_CONFIG_FNAME, encoding="utf-8") as f:
+    with open(user_config_fname, encoding="utf-8") as f:
         user_config = yaml.safe_load(f)
-        log.debug(f"Loaded user configuration from:\n{USER_CONFIG_FNAME}")
+        log.debug(f"Loaded user configuration from:\n{user_config_fname}")
 
     # Update default config with user config
     for k, d in user_config.items():
         # Check that user didn't add invalid keys to yaml file
         if k not in config:
-            err_msg = f"User configuration contains invalid keys, check file:\n{USER_CONFIG_FNAME}"
+            err_msg = f"User configuration contains invalid keys, check file:\n{user_config_fname}"
             raise ValueError(err_msg)
         config[k].update(d)
 

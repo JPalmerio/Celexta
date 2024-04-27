@@ -3,7 +3,7 @@
 from PyQt6 import uic, QtWidgets
 from celexta.about import aboutWindow
 from celexta.gcn_maker import GcnMakerWindow
-from celexta.initialize import DIRS
+from celexta.initialize import SRC_DIRS
 
 class MainGUI(QtWidgets.QMainWindow):
     """Main high-level Graphical User Interface (GUI).
@@ -19,7 +19,7 @@ class MainGUI(QtWidgets.QMainWindow):
     """
     def __init__(self, *args, **kwargs):
         super(MainGUI, self).__init__(*args, **kwargs)
-        uic.loadUi(DIRS["UI"] / "main_gui.ui", self)
+        uic.loadUi(SRC_DIRS["UI"] / "main_gui.ui", self)
         
         self.set_up_windows()
         
