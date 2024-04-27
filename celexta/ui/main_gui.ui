@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>675</width>
+    <height>143</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Celexta</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>675</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCelexta">
+    <property name="title">
+     <string>Celexta</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionQuit_Celexta"/>
+   </widget>
+   <widget class="QMenu" name="menuFiles">
+    <property name="title">
+     <string>Files</string>
+    </property>
+    <widget class="QMenu" name="menuOpen">
+     <property name="title">
+      <string>Open</string>
+     </property>
+     <addaction name="actionSpectrum_1D"/>
+     <addaction name="actionSpectrum_2D"/>
+     <addaction name="separator"/>
+     <addaction name="actionPhotometry_table"/>
+     <addaction name="separator"/>
+     <addaction name="actionImage"/>
+    </widget>
+    <addaction name="menuOpen"/>
+    <addaction name="actionSave"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionGCN_Maker"/>
+   </widget>
+   <addaction name="menuCelexta"/>
+   <addaction name="menuFiles"/>
+   <addaction name="menuTools"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionQuit_Celexta">
+   <property name="text">
+    <string>Quit Celexta</string>
+   </property>
+   <property name="shortcut">
+    <string/>
+   </property>
+  </action>
+  <action name="actionCheck_for_updates">
+   <property name="text">
+    <string>Check for updates...</string>
+   </property>
+  </action>
+  <action name="actionOpen_2D_spectrum">
+   <property name="text">
+    <string>Open 2D spectrum</string>
+   </property>
+  </action>
+  <action name="actionSpectrum_1D">
+   <property name="text">
+    <string>Spectrum 1D</string>
+   </property>
+  </action>
+  <action name="actionSpectrum_2D">
+   <property name="text">
+    <string>Spectrum 2D</string>
+   </property>
+  </action>
+  <action name="actionPhotometry_table">
+   <property name="text">
+    <string>Photometry table</string>
+   </property>
+  </action>
+  <action name="actionImage">
+   <property name="text">
+    <string>Image</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionGCN_Maker">
+   <property name="text">
+    <string>GCN Maker</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

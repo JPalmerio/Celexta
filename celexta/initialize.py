@@ -22,7 +22,7 @@ DIRS = {
 DEFAULT_CONFIG_FNAME = Path("~/.celexta/config/default_config.yaml").expanduser().resolve()
 USER_CONFIG_FNAME = Path("~/.celexta/config/user_config.yaml").expanduser().resolve()
 FORMATTER = logging.Formatter(
-    "%(asctime)s - %(levelname)8s - [%(filename)s:%(lineno)3s - %(funcName)10s] - %(message)s",
+    "%(asctime)s - %(levelname)8s - %(name)s - [%(filename)s:%(lineno)3s - %(funcName)10s] - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
@@ -40,6 +40,9 @@ def update_logging(log_level: str | int, log_file: str | Path | None = None) -> 
     """
     root = logging.getLogger()
     root.setLevel(log_level)
+    # Raise level of certain packages that flood logging
+    for name in ("matplotlib", "PyQt6.uic"):
+        logging.getLogger(name).setLevel(logging.WARNING)
 
     if log_file:
         # Expand path and make sure path exists

@@ -11,9 +11,12 @@ import logging
 import sys
 from pprint import pformat
 
+from PyQt6 import QtWidgets
+
 import celexta.initialize as init
 from celexta import __version__
 from celexta.aesthetics import __CELEXTA_LOGO__
+from celexta.main_gui import MainGUI
 
 # Define root logger
 log = logging.getLogger()
@@ -60,6 +63,10 @@ def main():
     )
 
     log.info("Launching GUI...")
+    app = QtWidgets.QApplication(sys.argv)
+    gui = MainGUI()
+    gui.show()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
