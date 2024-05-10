@@ -7,9 +7,7 @@ Authors:
 """
 
 import argparse
-import logging
 import sys
-from pprint import pformat
 
 from PyQt6 import QtWidgets
 
@@ -19,11 +17,7 @@ from celexta.aesthetics import __CELEXTA_LOGO__
 from celexta.main_gui import MainGUI
 
 # Define root logger
-log = logging.getLogger()
-s_hdlr = logging.StreamHandler(stream=sys.stdout)
-s_hdlr.setFormatter(init.FORMATTER)
-log.addHandler(s_hdlr)
-log.setLevel(logging.DEBUG)
+log = init.default_logging()
 
 
 def get_celexta_cli_args():
@@ -44,14 +38,7 @@ def main():
     """Launch the celexta GUI app"""
     # Retrieve the command line arguments
     # args = get_celexta_cli_args()
-    log.info(
-            "\n"
-            + 36 * "-"
-            + __CELEXTA_LOGO__
-            + "\n"
-            + 14 * " " + f"v{__version__}\n"
-            + 36 * "-"
-        )
+    log.info("\n" + 36 * "-" + __CELEXTA_LOGO__ + "\n" + 14 * " " + f"v{__version__}\n" + 36 * "-")
 
     # Load config
     config = init.load_config()
@@ -64,7 +51,7 @@ def main():
 
     log.info("Launching GUI...")
     app = QtWidgets.QApplication(sys.argv)
-    gui = MainGUI()
+    gui = MainGUI(config=config)
     gui.show()
     sys.exit(app.exec())
 

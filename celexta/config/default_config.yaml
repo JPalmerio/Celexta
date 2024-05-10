@@ -3,8 +3,9 @@
 # Any modification should be done to 'user_config.yaml' which will override the values
 # found here
 
-filenames:
+files:
   last_opened: '~'
+  default_gcn_authors: 'GCN_authors.csv'
 
 # Logging configuration
 # Only change this if you know what you are doing

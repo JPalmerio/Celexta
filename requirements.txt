@@ -8,3 +8,5 @@ astropy>=6.0
 specutils>=1.9
 astroquery
 cmasher
+openai
+yaml

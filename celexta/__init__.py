@@ -1,7 +1,8 @@
 """Initialize celexta directories"""
+
 import logging
-from pathlib import Path
 import os
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 

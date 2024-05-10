@@ -1,5 +1,6 @@
 # User configuration file which will override 'default_config.yaml'
 # This file is used to save the state of certain variables used by Celexta
 
-filenames:
+files:
   last_opened: '~'
+  default_gcn_authors: 'GCN_authors.csv'
