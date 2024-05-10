@@ -3,13 +3,14 @@
 import logging
 import logging.config
 import shutil
+import sys
 from pathlib import Path
 from pprint import pformat
 
 import yaml
 
-from celexta import __CELEXTA_SRC_DIR__ as SRC_DIR
 from celexta import __CELEXTA_DIR__ as CELEXTA_DIR
+from celexta import __CELEXTA_SRC_DIR__ as SRC_DIR
 
 log = logging.getLogger(__name__)
 SRC_DIRS = {
@@ -24,12 +25,20 @@ USR_DIRS = {
     "CONFIG": CELEXTA_DIR / "config",
 }
 
-DEFAULT_CONFIG_FNAME = Path("~/.celexta/config/default_config.yaml").expanduser().resolve()
-USER_CONFIG_FNAME = Path("~/.celexta/config/user_config.yaml").expanduser().resolve()
 FORMATTER = logging.Formatter(
     "%(asctime)s - %(levelname)8s - %(name)s - [%(filename)s:%(lineno)3s - %(funcName)10s] - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+
+def default_logging():
+    """Create default logging configuration"""
+    log = logging.getLogger()
+    s_hdlr = logging.StreamHandler(stream=sys.stdout)
+    s_hdlr.setFormatter(FORMATTER)
+    log.addHandler(s_hdlr)
+    log.setLevel(logging.DEBUG)
+    return log
 
 
 def update_logging(log_level: str | int, log_file: str | Path | None = None) -> None:
@@ -123,11 +132,11 @@ def update_last_opened(path: str | Path) -> None:
     """Update the 'last_opened' key of the user configuration file"""
     # Get the path to the configuration file
 
-    with open(USER_CONFIG_FNAME, encoding="utf-8") as f:
+    with open(USR_DIRS["CONFIG"] / "user_config.yaml", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     config["filenames"]["last_opened"] = str(Path(path).expanduser().resolve())
 
-    with open(USER_CONFIG_FNAME, "w", encoding="utf-8") as f:
+    with open(USR_DIRS["CONFIG"] / "user_config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, stream=f)
         log.debug(f"Updated last opened file with:\n{path}")
