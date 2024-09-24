@@ -42,6 +42,8 @@ def open_file(parent: QtWidgets.QWidget, base_dir: Path | str | None = None, fil
         filename = str(filename[0])
         log.debug(f"Selected file: {filename}")
         return filename
+    else:
+        return ""
 
 
 def save_file(

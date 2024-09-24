@@ -3,9 +3,9 @@
 import logging
 import shutil
 from pathlib import Path
-from typing import List, Optional, Tuple
+
 import pandas as pd
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtCore, QtWidgets
 
 from celexta.initialize import SRC_DIRS, USR_DIRS
 from celexta.io_gui import open_file, save_file
@@ -15,13 +15,15 @@ log = logging.getLogger(__name__)
 
 GCN_MAKER_DIR = USR_DIRS["GCN_MAKER"]
 DEFAULT_AUTHOR_TABLE = GCN_MAKER_DIR / "GCN_authors.csv"
-Author = Tuple[str, str]
-Authors = List[Author]
+Author = tuple[str, str]
+Authors = list[Author]
 
 
 class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
-    def __init__(self, parent, authors_fname: str | Path | None = None):
-        super(GcnMakerWindow, self).__init__(parent)
+    """`QDialog` widget that contains the GCN maker user interface"""
+
+    def __init__(self, parent, authors_fname: str | Path | None = None) -> None:
+        super().__init__(parent)
         log.info("Initializing GCN maker")
         self.parent = parent
         self.setupUi(self)
@@ -32,14 +34,14 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
         # Will look for default GCN_authors.csv if authors_fname is None
         self.load_authors(fname=authors_fname)
 
-    def connect_buttons(self):
+    def connect_buttons(self) -> None:
         """Connect buttons with signals"""
         self.btn_load_template.clicked.connect(self.load_template)
         self.btn_save_template.clicked.connect(self.save_template)
         self.btn_add_author.clicked.connect(self.add_author)
 
     # Authors
-    def load_authors(self, fname: Optional[str | Path] = None) -> None:
+    def load_authors(self, fname: str | Path | None = None) -> None:
         """Load author table from input file"""
         # If no filename provided, use default author table
         if fname is None:
@@ -65,8 +67,7 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
             return
 
     def add_author(self) -> None:
-        """ Add new author to the authors list from the user input
-        """
+        """Add new author to the authors list from the user input"""
         index = self.comboBox_author.currentIndex()
         log.debug(f"Author combobox index: {index}")
         if index < 0:
@@ -95,7 +96,7 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
         # Clear the lineEdit
         self.comboBox_author.clear()
 
-    def save_template(self):
+    def save_template(self) -> None:
         """Save text in plainTextEdit_gcn as template"""
         log.debug("Saving current GCN text as template")
 
@@ -114,7 +115,7 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
         with open(fname, "w", encoding="utf-8") as f:
             f.write(text)
 
-    def load_template(self):
+    def load_template(self) -> None:
         """Load template in plainTextEdit_gcn"""
         log.debug("Loading GCN template")
 
@@ -139,7 +140,7 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
         log.info(f"Focus: {w}")
 
     @staticmethod
-    def create_dir():
+    def create_dir() -> None:
         """Create directories if they don't exist"""
         # Make sure templates directory exists
         templates_dir = GCN_MAKER_DIR / "templates"
@@ -150,26 +151,47 @@ class GcnMakerWindow(QtWidgets.QDialog, Ui_GcnMakerWindow):
 
 
 class AuthorModel(QtCore.QAbstractListModel):
-    def __init__(self, authors: Optional[Authors] = None):
+    """`QAbstractListModel` containing author names and affiliations"""
+
+    def __init__(self, authors: Authors | None = None) -> None:
         super().__init__()
-        self.authors = authors or [('', '')]
+        self.authors = authors or [("", "")]
         self.filename = None
 
     @staticmethod
-    def _get_family_name(author: Author):
+    def _get_family_name(author: Author) -> str:
+        """Get the family name of an author
+
+        Parameters
+        ----------
+        author : Author (Tuple[str, str])
+            Author full name and affiliation as a tuple of strings.
+
+        Returns
+        -------
+        str
+            Family name of the author parsed from the full name.
+        """
         names = author[0].split()
-        if names:
-            return names[-1]
-        else:
+        if not names:
             log.debug(f"No family name found for author '{author!s}', returning '{author[0]!s}'")
             # If no family name, its probably empty string
             return author[0]
+        return names[-1]
 
-    def update_authors(self, authors: Authors):
+    def update_authors(self, authors: Authors) -> None:
+        """Update author model with list of new names and affiliations
+
+        Parameters
+        ----------
+        authors : Authors (List[Tuple[str, str]])
+            List of authors to add to the author model
+        """
         self.authors += authors
         self.authors.sort(key=self._get_family_name)
 
     def data(self, index, role):
+        """Standard override of `QAbstractItemModel.data`"""
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
             name, affiliation = self.authors[index.row()]
             return name
@@ -178,7 +200,7 @@ class AuthorModel(QtCore.QAbstractListModel):
             return name
 
     def get_name_w_affiliation(self, index: int) -> str:
-        """ Get author name and affiliation
+        """Get author name and affiliation
 
         Parameters
         ----------
@@ -191,10 +213,10 @@ class AuthorModel(QtCore.QAbstractListModel):
             String of the concatenated author name and affiliation.
         """
         name, affiliation = self.authors[index]
-        if name:
-            return f"{name}" + f" ({affiliation})"
-        else:
-            return ''
+        if not name:
+            return ""
+        return f"{name}" + f" ({affiliation})"
 
-    def rowCount(self, index):
+    def rowCount(self, index) -> int:
+        """Standard override of `QAbstractItemModel.rowCount`"""
         return len(self.authors)

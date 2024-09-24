@@ -55,6 +55,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionGCN_Maker"/>
+    <addaction name="actionFinding_Chart_Generator"/>
    </widget>
    <addaction name="menuCelexta"/>
    <addaction name="menuFiles"/>
@@ -115,6 +116,11 @@
   <action name="actionGCN_Maker">
    <property name="text">
     <string>GCN Maker</string>
+   </property>
+  </action>
+  <action name="actionFinding_Chart_Generator">
+   <property name="text">
+    <string>Finding Chart Generator</string>
    </property>
   </action>
  </widget>

@@ -1,11 +1,15 @@
+from typing import Dict
+from .about_window import AboutWindow
 """Celexta main GUI."""
 
 from PyQt6 import QtWidgets
 
 from celexta.about import aboutWindow
 from celexta.gcn_maker import GcnMakerWindow
-from celexta.windows import Ui_MainWindow
+from celexta.finding_chart_generator import FindingChartGeneratorWindow
 from celexta.initialize import USR_DIRS
+from celexta.windows import Ui_MainWindow
+
 
 class MainGUI(QtWidgets.QMainWindow, Ui_MainWindow):
     """Main high-level Graphical User Interface (GUI).
@@ -21,17 +25,36 @@ class MainGUI(QtWidgets.QMainWindow, Ui_MainWindow):
     """
 
     def __init__(self, config: dict, *args, obj=None, **kwargs):
-        super(MainGUI, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # uic.loadUi(SRC_DIRS["UI"] / "main_gui.ui", self)
         self.setupUi(self)
         self.config = config
         self.set_up_windows()
 
-        self.actionAbout.triggered.connect(aboutWindow(self).show)
-        self.actionQuit_Celexta.triggered.connect(self.close)
-        self.actionGCN_Maker.triggered.connect(self.windows["gcn_maker"].show)
+        self.actionAbout.triggered.connect(self.show_about_window)
+        self.actionQuit_Celexta.triggered.connect(self.quit_application)
+        self.actionGCN_Maker.triggered.connect(self.show_gcn_maker)
+        self.actionFinding_Chart_Generator.triggered.connect(self.show_finding_chart_generator)
+
+    def create_windows(self) -> Dict[str, QtWidgets.QWidget]:
+        return {
+            "gcn_maker": GcnMakerWindow(self, authors_fname=USR_DIRS["GCN_MAKER"]/self.config["files"]["default_gcn_authors"]),
+            "finding_chart_generator": FindingChartGeneratorWindow(self),
+        }
 
     def set_up_windows(self):
-        self.windows = {
-            "gcn_maker": GcnMakerWindow(self, authors_fname=USR_DIRS["GCN_MAKER"]/self.config["files"]["default_gcn_authors"]),
-        }
+        self.windows = self.create_windows()
+
+    def show_about_window(self):
+        about_window = AboutWindow(self)
+        about_window.show()
+
+    def quit_application(self):
+        self.close()
+
+    def show_gcn_maker(self):
+        self.windows["gcn_maker"].show()
+
+    def show_finding_chart_generator(self):
+        self.windows["finding_chart_generator"].show()
+

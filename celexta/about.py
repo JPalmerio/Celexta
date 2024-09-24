@@ -8,7 +8,7 @@ from celexta.initialize import SRC_DIRS
 
 class aboutWindow(QtWidgets.QDialog):
     def __init__(self, parent):
-        super(aboutWindow, self).__init__(parent)
+        super().__init__(parent)
         self.parent = parent
         uic.loadUi(SRC_DIRS["UI"] / "about.ui", self)
         self.label.setText(f"Celexta version: {__version__}")

@@ -6,7 +6,8 @@
 files:
   last_opened: '~'
   default_gcn_authors: 'GCN_authors.csv'
-
+surveys:
+  default_survey: 'LegacySurveyDR10'
 # Logging configuration
 # Only change this if you know what you are doing
 logging:
