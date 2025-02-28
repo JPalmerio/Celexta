@@ -1,5 +1,6 @@
 """Contains all the initialization code"""
 
+import json
 import logging
 import logging.config
 import shutil
@@ -23,6 +24,7 @@ USR_DIRS = {
     "ROOT": CELEXTA_DIR,
     "GCN_MAKER": CELEXTA_DIR / "gcn_maker",
     "CONFIG": CELEXTA_DIR / "config",
+    "CACHE": CELEXTA_DIR / "cache",
 }
 
 FORMATTER = logging.Formatter(
@@ -135,8 +137,53 @@ def update_last_opened(path: str | Path) -> None:
     with open(USR_DIRS["CONFIG"] / "user_config.yaml", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
-    config["filenames"]["last_opened"] = str(Path(path).expanduser().resolve())
+    config["files"]["last_opened"] = str(Path(path).expanduser().resolve())
 
     with open(USR_DIRS["CONFIG"] / "user_config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, stream=f)
         log.debug(f"Updated last opened file with:\n{path}")
+
+
+def save_session(main_window):
+    """Save user data to the config file."""
+    save_dir = USR_DIRS["CONFIG"] / "latest_session_data/"
+    log.info(f"Saving session data to {save_dir!s}")
+    if not save_dir.exists():
+        save_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        # Clear the directory
+        for file in save_dir.iterdir():
+            if file.is_file():
+                file.unlink()
+            # Force delete directories
+            elif file.is_dir():
+                shutil.rmtree(file)
+    session_data = {}
+    for tab in range(main_window.tab_widget.count()):
+        widget = main_window.tab_widget.widget(tab)
+        tab_name = main_window.tab_widget.tabText(tab)
+        log.debug(f"Saving tab: {tab_name}")
+        serialized_data = widget.controller.to_serializable_dict(save_dir / f"{tab_name}")
+        session_data[tab_name] = serialized_data
+
+    # Save as json format
+    with open(USR_DIRS["CONFIG"] / "latest_session.json", "w", encoding="utf-8") as f:
+        json.dump(session_data, f, indent=4)
+    log.info("Session data saved")
+
+
+def load_session(main_window):
+    """Load user data from the config file."""
+    session_file = USR_DIRS["CONFIG"] / "latest_session.json"
+    log.info(f"Loading session data from {session_file!s}")
+    if not session_file.exists():
+        log.warning(f"No session data found at '{session_file!s}', skipping")
+        return
+    with open(session_file, encoding="utf-8") as f:
+        session_data = json.load(f)
+    log.debug(f"Loaded session data:\n{pformat(session_data)}")
+    for tab, data in session_data.items():
+        log.debug(f"Loading tab: {tab}")
+        widget = main_window.add_new_tab(title=tab)
+        widget.controller.from_serializable_dict(data)
+    log.info("Session data loaded")

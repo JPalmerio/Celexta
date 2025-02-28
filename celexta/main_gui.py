@@ -1,14 +1,16 @@
-from typing import Dict
-from .about_window import AboutWindow
 """Celexta main GUI."""
+
+from typing import Dict
 
 from PyQt6 import QtWidgets
 
 from celexta.about import aboutWindow
-from celexta.gcn_maker import GcnMakerWindow
 from celexta.finding_chart_generator import FindingChartGeneratorWindow
+from celexta.gcn_maker import GcnMakerWindow
 from celexta.initialize import USR_DIRS
 from celexta.windows import Ui_MainWindow
+
+from .about_window import AboutWindow
 
 
 class MainGUI(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -38,7 +40,9 @@ class MainGUI(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def create_windows(self) -> Dict[str, QtWidgets.QWidget]:
         return {
-            "gcn_maker": GcnMakerWindow(self, authors_fname=USR_DIRS["GCN_MAKER"]/self.config["files"]["default_gcn_authors"]),
+            "gcn_maker": GcnMakerWindow(
+                self, authors_fname=USR_DIRS["GCN_MAKER"] / self.config["files"]["default_gcn_authors"]
+            ),
             "finding_chart_generator": FindingChartGeneratorWindow(self),
         }
 
@@ -57,4 +61,3 @@ class MainGUI(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def show_finding_chart_generator(self):
         self.windows["finding_chart_generator"].show()
-

@@ -8,7 +8,7 @@ from PyQt6 import QtCore, QtWidgets
 log = logging.getLogger(__name__)
 
 
-def open_file(parent: QtWidgets.QWidget, base_dir: Path | str | None = None, file_type: str = "(*)") -> str:
+def open_files(parent: QtWidgets.QWidget, base_dir: Path | str | None = None, file_type: str = "(*)") -> str:
     """Open a file dialog and select a file.
 
     Parameters
@@ -30,11 +30,16 @@ def open_file(parent: QtWidgets.QWidget, base_dir: Path | str | None = None, fil
     if base_dir is None:
         base_dir = QtCore.QDir.currentPath()
     log.debug(f"Opening file dialog in {base_dir!s}")
-    dialog = QtWidgets.QFileDialog(parent)
-    dialog.setWindowTitle("Open file")
-    dialog.setNameFilter(file_type)
-    dialog.setDirectory(str(base_dir))
-    dialog.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
+    dialog = QtWidgets.QFileDialog(
+        parent,
+        caption="Open Files",
+        directory=str(base_dir),
+        filter=file_type,
+    )
+    # dialog.setWindowTitle("Open file")
+    # dialog.setNameFilter(file_type)
+    # dialog.setDirectory(str(base_dir))
+    # dialog.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
     filename = None
     if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
         filename = dialog.selectedFiles()
@@ -42,8 +47,8 @@ def open_file(parent: QtWidgets.QWidget, base_dir: Path | str | None = None, fil
         filename = str(filename[0])
         log.debug(f"Selected file: {filename}")
         return filename
-    else:
-        return ""
+
+    return ""
 
 
 def save_file(
